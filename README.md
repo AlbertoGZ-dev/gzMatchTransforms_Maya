@@ -1,22 +1,22 @@
-# Character Toolset
-Character Toolset is a tool to automatize some repetitive tasks in character preparation Maya scene for CrimsonSky.
+# Match MultiObject
+Match MultiObject makes match transformations on multiple objects by paired objects given a first selection list for the origin objects and second selection list to target objects. 
 
-<img src="https://github.com/AlbertoGZ-dev/characterToolset/blob/main/characterToolset.jpg"></img>
+<img src="https://github.com/AlbertoGZ-dev/matchMultiObject/blob/main/matchMultiObject.jpg"></img>
 
 ## Setup
 
 #### Manual installation
 
-Place the *characterToolset.py* and *\_\_init\_\_.py* files in a folder named *characterToolset* in your Maya scripts directory and create a python shell button with the following code:
+Place the *matchMultiObject.py* and *\_\_init\_\_.py* files in a folder named *matchMultiObject* in your Maya scripts directory and create a python shell button with the following code:
 
 ```python
-from characterToolset import characterToolset
+from matchMultiObject import matchMultiObject
 
 try:
     md_win.close()
 except:
     pass
-md_win = characterToolset.characterToolset(parent=characterToolset.getMainWindow())
+md_win = matchMultiObject.matchMultiObject(parent=matchMultiObject.getMainWindow())
 md_win.show()
 md_win.raise_()
 ```
