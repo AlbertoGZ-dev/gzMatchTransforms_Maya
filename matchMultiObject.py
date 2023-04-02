@@ -22,6 +22,7 @@ import maya.api.OpenMaya as om
 
 # GENERAL VARS
 version = '0.1.0'
+about = 'by Alberto GZ'
 winWidth = 900
 winHeight = 800
 red = '#872323'
@@ -53,7 +54,7 @@ class matchMultiObject(QtWidgets.QMainWindow):
 
         # Creates object, Title Name and Adds a QtWidget as our central widget/Main Layout
         self.setObjectName('matchMultiObjectUI')
-        self.setWindowTitle('matchMultiObject' + ' ' + 'v' + version)
+        self.setWindowTitle('matchMultiObject' + ' ' + 'v' + version + ' - ' + about)
         mainLayout = QtWidgets.QWidget(self)
         self.setCentralWidget(mainLayout)
 
@@ -114,8 +115,10 @@ class matchMultiObject(QtWidgets.QMainWindow):
         #
 
         # Caption (fromObject)
-        self.fromObjectLabel = QtWidgets.QLabel("FROM")
+        self.fromObjectLabel = QtWidgets.QLabel("FROM ")
         self.fromObjectLabel.setFixedHeight(70)
+        self.fromObjectLabel.setStyleSheet("border: 3px solid"+lightgreen+';border-bottom:0; border-top-left-radius:12px; border-top-right-radius:12px')
+        self.fromObjectLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
         # Filter object type (fromObject)
         self.fromObjectFilterLabel = QtWidgets.QLabel('Show:')
@@ -168,8 +171,10 @@ class matchMultiObject(QtWidgets.QMainWindow):
         ### "TO OBJECT" SECTION
         #
         # Caption (toObject)
-        self.toObjectLabel = QtWidgets.QLabel("TO")
+        self.toObjectLabel = QtWidgets.QLabel("TO ")
         self.toObjectLabel.setFixedHeight(70)
+        self.toObjectLabel.setStyleSheet("border: 3px solid"+lightpurple+';border-bottom:0; border-top-left-radius:12px; border-top-right-radius:12px')
+        self.toObjectLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
         # Filter object type (toObject)
         self.toObjectFilterLabel = QtWidgets.QLabel('Show:')
@@ -308,12 +313,6 @@ class matchMultiObject(QtWidgets.QMainWindow):
                     self.fromObjectQList.setRowHidden(row, False)
                 else:
                     self.fromObjectQList.setRowHidden(row, True)
-    
-
-    def fromObjectReload(self):
-        self.fromObjectQList.clear()
-        del fromObjectSelected[:]
-        self.fromObjectLoad()
 
 
     def fromObjectLoad(self):
@@ -347,10 +346,11 @@ class matchMultiObject(QtWidgets.QMainWindow):
         fromObjectSelected = []
         for i in items:
             fromObjectSelected.append(i.text())
-            if len(fromObjectSelected) <= 1:
-                self.fromObjectLabel.setText('FROM')
+
+            if len(fromObjectSelected) < 1:
+                self.fromObjectLabel.setText('FROM ')
             else:   
-                self.fromObjectLabel.setText(str(len(fromObjectSelected)))
+                self.fromObjectLabel.setText('FROM '+str(len(fromObjectSelected)))
         
         return fromObjectSelected
         #self.statusBar.showMessage(str(fromObjectSelected), 4000) #for testing
@@ -365,6 +365,14 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.fromObjectQList.clearSelection()
         if fromObjectSelected != []:
             del fromObjectSelected[:]
+        self.fromObjectLabel.setText('FROM ')
+
+    
+    def fromObjectReload(self):
+        self.fromObjectQList.clear()
+        del fromObjectSelected[:]
+        self.fromObjectLabel.setText('FROM ')
+        self.fromObjectLoad()
 
     
 
@@ -384,12 +392,6 @@ class matchMultiObject(QtWidgets.QMainWindow):
                     self.toObjectQList.setRowHidden(row, False)
                 else:
                     self.toObjectQList.setRowHidden(row, True)
-    
-
-    def toObjectReload(self):
-        self.toObjectQList.clear()
-        del toObjectSelected[:]
-        self.toObjectLoad()
 
 
     def toObjectLoad(self):
@@ -409,7 +411,6 @@ class matchMultiObject(QtWidgets.QMainWindow):
         toObjectList = []
         toObjectList.append(cmds.ls(type=toObjectType, v=toObjectVisible, dag=1, rn=toObjectRefs))
 
-        
         for toObject in toObjectList:
             #toObject = [w.replace('Shape', '') for w in toObject]
             toObject.sort()
@@ -424,6 +425,11 @@ class matchMultiObject(QtWidgets.QMainWindow):
         toObjectSelected = []
         for i in items:
             toObjectSelected.append(i.text())
+
+            if len(toObjectSelected) < 1:
+                self.toObjectLabel.setText('TO ')
+            else:   
+                self.toObjectLabel.setText('TO '+str(len(toObjectSelected)))
         
         return toObjectSelected
         #self.statusBar.showMessage(str(toObjectSelected), 4000) #for testing
@@ -438,6 +444,14 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.toObjectQList.clearSelection()
         if toObjectSelected != []:
             del toObjectSelected[:]
+        self.toObjectLabel.setText('TO ')
+
+
+    def toObjectReload(self):
+        self.toObjectQList.clear()
+        del toObjectSelected[:]
+        self.toObjectLoad()
+        self.toObjectLabel.setText('TO ')
         
 
     
