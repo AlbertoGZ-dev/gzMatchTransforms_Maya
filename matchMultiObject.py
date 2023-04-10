@@ -1,10 +1,18 @@
 '''
------------------------------------------
-Description:
+████████████████████████████████████████████████████████████████████████████
+    
+    Macth MultiObject for Maya
+    
+    Description: Match MultiObject makes match transformations on 
+    multiple objects by paired objects given a first selection list 
+    for the origin objects and second selection list to target objects. 
+    
+    Author: AlbertoGZ
+    albertogzonline@gmail.com
+    https://github.com/AlbertoGZ-dev
 
-Autor: AlbertoGZ
-Email: albertogzonline@gmail.com
------------------------------------------
+████████████████████████████████████████████████████████████████████████████
+
 '''
 
 from select import select
@@ -21,7 +29,7 @@ import maya.api.OpenMaya as om
 
 
 # GENERAL VARS
-version = '0.1.0'
+version = '0.1.1'
 about = 'by Alberto GZ'
 winWidth = 800
 winHeight = 800
@@ -131,6 +139,9 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.fromObjectFilterRefNodesChk = QtWidgets.QCheckBox('Reference nodes only')
         self.fromObjectFilterRefNodesChk.setStyleSheet('background-color:' + lightgreen)
         self.fromObjectFilterRefNodesChk.stateChanged.connect(self.fromObjectReload)
+        self.fromObjectFilterTopNodesChk = QtWidgets.QCheckBox('Top nodes only')
+        self.fromObjectFilterTopNodesChk.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectFilterTopNodesChk.stateChanged.connect(self.fromObjectReload)
         
         # SearchBox input for filter list (fromObject)
         self.fromObjectSearchBox = QtWidgets.QLineEdit('', self)
@@ -191,6 +202,9 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.toObjectFilterRefNodesChk = QtWidgets.QCheckBox('Reference nodes only')
         self.toObjectFilterRefNodesChk.setStyleSheet('background-color:' + lightpurple)
         self.toObjectFilterRefNodesChk.stateChanged.connect(self.toObjectReload)
+        self.toObjectFilterTopNodesChk = QtWidgets.QCheckBox('Top nodes only')
+        self.toObjectFilterTopNodesChk.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectFilterTopNodesChk.stateChanged.connect(self.toObjectReload)
        
         # SearchBox input for filter list (toObject)
         self.toObjectSearchBox = QtWidgets.QLineEdit('', self)
@@ -262,6 +276,7 @@ class matchMultiObject(QtWidgets.QMainWindow):
         layout1A.addWidget(self.fromObjectSearchBox)
         layout1A.addWidget(self.fromObjectQList)
         layout1A.addWidget(self.fromObjectFilterVisibleChk)
+        layout1A.addWidget(self.fromObjectFilterTopNodesChk)
         layout1A.addWidget(self.fromObjectFilterRefNodesChk)
         layout1B.addWidget(self.fromObjectSelectLabel)
         layout1B.addWidget(self.fromObjectSelectAllBtn)
@@ -273,6 +288,7 @@ class matchMultiObject(QtWidgets.QMainWindow):
         layout3A.addWidget(self.toObjectSearchBox)
         layout3A.addWidget(self.toObjectQList)
         layout3A.addWidget(self.toObjectFilterVisibleChk)
+        layout3A.addWidget(self.toObjectFilterTopNodesChk)
         layout3A.addWidget(self.toObjectFilterRefNodesChk)
         layout3B.addWidget(self.selecttoObjectLabel)
         layout3B.addWidget(self.toObjectSelectAllBtn)
@@ -317,7 +333,8 @@ class matchMultiObject(QtWidgets.QMainWindow):
         else:
             self.fromObjectQList.clear()
             self.fromObjectQList.addItems(selection)
-        
+            self.fromObjectQList.selectAll()
+
     
     def fromObjectFilter(self):
         textFilter = str(self.fromObjectSearchBox.text()).lower()
@@ -334,6 +351,8 @@ class matchMultiObject(QtWidgets.QMainWindow):
 
     def fromObjectLoad(self):
         fromObjectType = 'transform'
+        dag = 1
+        fromObjectTranforms = 1
         global fromObjectList
 
         if self.fromObjectFilterVisibleChk.isChecked() == True:
@@ -346,8 +365,17 @@ class matchMultiObject(QtWidgets.QMainWindow):
         else:
             fromObjectRefs = 0
 
+        if self.fromObjectFilterTopNodesChk.isChecked() == True:
+            fromObjectTop = 1
+            fromObjectTranforms = 0
+            dag = 0
+        else:
+            fromObjectTop = 0
+            fromObjectTranforms = 1
+            dag = 1
+
         fromObjectList = []
-        fromObjectList.append(cmds.ls(type=fromObjectType, v=fromObjectVisible, dag=1, rn=fromObjectRefs))
+        fromObjectList.append(cmds.ls(transforms=fromObjectTranforms, dag=dag, v=fromObjectVisible, rn=fromObjectRefs, assemblies=fromObjectTop))
         
         for fromObject in fromObjectList:
             # fromObject = [w.replace('Shape', '') for w in fromObject]
@@ -407,6 +435,7 @@ class matchMultiObject(QtWidgets.QMainWindow):
         else:
             self.toObjectQList.clear()
             self.toObjectQList.addItems(selection)
+            self.toObjectQList.selectAll()
 
     def toObjectFilter(self):
         textFilter = str(self.toObjectSearchBox.text()).lower()
@@ -434,9 +463,18 @@ class matchMultiObject(QtWidgets.QMainWindow):
             toObjectRefs = 1
         else:
             toObjectRefs = 0
+        
+        if self.toObjectFilterTopNodesChk.isChecked() == True:
+            toObjectTop = 1
+            toObjectTranforms = 0
+            dag = 0
+        else:
+            toObjectTop = 0
+            toObjectTranforms = 1
+            dag = 1
 
         toObjectList = []
-        toObjectList.append(cmds.ls(type=toObjectType, v=toObjectVisible, dag=1, rn=toObjectRefs))
+        toObjectList.append(cmds.ls(transforms=toObjectTranforms, dag=dag, v=toObjectVisible, rn=toObjectRefs, assemblies=toObjectTop))
 
         for toObject in toObjectList:
             #toObject = [w.replace('Shape', '') for w in toObject]
