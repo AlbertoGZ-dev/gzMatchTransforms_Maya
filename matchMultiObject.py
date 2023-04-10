@@ -23,16 +23,16 @@ import maya.api.OpenMaya as om
 # GENERAL VARS
 version = '0.1.0'
 about = 'by Alberto GZ'
-winWidth = 900
+winWidth = 800
 winHeight = 800
 red = '#872323'
 green = '#207527'
-lightblue = '#7d654b'
+lightbrown = '#7d654b'
 lightpurple = '#604b69'
 lightgreen = '#5b694b'
 
-global fromObjectSelected
-global toObjectSelected
+fromObjectSelected = []
+toObjectSelected = []
 
 
 def getMainWindow():
@@ -69,14 +69,12 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.col4 = QtWidgets.QVBoxLayout()
         self.col5 = QtWidgets.QVBoxLayout()
         
-
         # Set columns for each layout using stretch policy
         columns.addLayout(self.col1, 3)
         columns.addLayout(self.col2, 0)
         columns.addLayout(self.col3, 3)
-        columns.addLayout(self.col4, 3)
+        columns.addLayout(self.col4, 2)
         columns.addLayout(self.col5, 3)
-    
 
         # Adding layouts
         layout1 = QtWidgets.QVBoxLayout()
@@ -89,7 +87,6 @@ class matchMultiObject(QtWidgets.QMainWindow):
         layout3B = QtWidgets.QHBoxLayout()
         layout4 = QtWidgets.QGridLayout()
         layout5 = QtWidgets.QGridLayout(alignment=QtCore.Qt.AlignTop)
-    
         
         self.col1.addLayout(layout1)
         self.col2.addLayout(layout2)
@@ -120,6 +117,11 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.fromObjectLabel.setStyleSheet("border: 3px solid"+lightgreen+';border-bottom:0; border-top-left-radius:12px; border-top-right-radius:12px')
         self.fromObjectLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
+        # Get selected button (fromObject)
+        self.fromObjectGetSelectedBtn = QtWidgets.QPushButton('Get selected')
+        self.fromObjectGetSelectedBtn.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectGetSelectedBtn.clicked.connect(self.fromObjectGetSelected)
+
         # Filter object type (fromObject)
         self.fromObjectFilterLabel = QtWidgets.QLabel('Show:')
         self.fromObjectFilterVisibleChk = QtWidgets.QCheckBox('Visible nodes only')
@@ -130,7 +132,6 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.fromObjectFilterRefNodesChk.setStyleSheet('background-color:' + lightgreen)
         self.fromObjectFilterRefNodesChk.stateChanged.connect(self.fromObjectReload)
         
-       
         # SearchBox input for filter list (fromObject)
         self.fromObjectSearchBox = QtWidgets.QLineEdit('', self)
         self.fromObjectRegex = QtCore.QRegExp('[0-9A-Za-z_]+')
@@ -176,6 +177,11 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.toObjectLabel.setStyleSheet("border: 3px solid"+lightpurple+';border-bottom:0; border-top-left-radius:12px; border-top-right-radius:12px')
         self.toObjectLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
+        # Get selected button (toObject)
+        self.toObjectGetSelectedBtn = QtWidgets.QPushButton('Get selected')
+        self.toObjectGetSelectedBtn.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectGetSelectedBtn.clicked.connect(self.toObjectGetSelected)
+       
         # Filter object type (toObject)
         self.toObjectFilterLabel = QtWidgets.QLabel('Show:')
         self.toObjectFilterVisibleChk = QtWidgets.QCheckBox('Visible nodes only')
@@ -221,8 +227,6 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.toObjectSelectReloadBtn.clicked.connect(self.toObjectReload)
         self.toObjectSelectReloadBtn.setStyleSheet('background-color:' + lightpurple)
     
-
-        
         # Status bar
         self.statusBar = QtWidgets.QStatusBar()
         self.setStatusBar(self.statusBar)
@@ -233,9 +237,9 @@ class matchMultiObject(QtWidgets.QMainWindow):
         separator.setFixedHeight(2)
         separator.setStyleSheet("background-color:rgb(255,0,0)")
 
-
         # Match button
         self.matchBtn = QtWidgets.QPushButton('Match')
+        self.matchBtn.setFixedHeight(80)
         self.matchBtn.clicked.connect(self.match)
         #self.matchBtn.setStyleSheet('background-color:' + lightblue)
 
@@ -251,8 +255,10 @@ class matchMultiObject(QtWidgets.QMainWindow):
         self.matchScaleChk.stateChanged.connect(self.matchBtnStatus)
 
 
-        #### Adding all elements to layouts
+        ### Adding all elements to layouts
+        #
         layout1A.addWidget(self.fromObjectLabel)
+        layout1A.addWidget(self.fromObjectGetSelectedBtn)
         layout1A.addWidget(self.fromObjectSearchBox)
         layout1A.addWidget(self.fromObjectQList)
         layout1A.addWidget(self.fromObjectFilterVisibleChk)
@@ -263,6 +269,7 @@ class matchMultiObject(QtWidgets.QMainWindow):
         layout1A.addWidget(self.fromObjectReloadBtn)
 
         layout3A.addWidget(self.toObjectLabel)
+        layout3A.addWidget(self.toObjectGetSelectedBtn)
         layout3A.addWidget(self.toObjectSearchBox)
         layout3A.addWidget(self.toObjectQList)
         layout3A.addWidget(self.toObjectFilterVisibleChk)
@@ -302,6 +309,16 @@ class matchMultiObject(QtWidgets.QMainWindow):
 
     ### "FROM OBJECT" SECTION
     #
+    def fromObjectGetSelected(self):
+        selection = cmds.ls(sl=1)
+        if len(selection) < 1:
+            self.statusBar.showMessage('Must be selected at least one item', 4000)
+            self.statusBar.setStyleSheet('background-color:'+red)
+        else:
+            self.fromObjectQList.clear()
+            self.fromObjectQList.addItems(selection)
+        
+    
     def fromObjectFilter(self):
         textFilter = str(self.fromObjectSearchBox.text()).lower()
         if not textFilter:
@@ -363,14 +380,15 @@ class matchMultiObject(QtWidgets.QMainWindow):
     def fromObjectSelectNone(self):
         fromObjectSelected = []
         self.fromObjectQList.clearSelection()
-        if fromObjectSelected != []:
+        if len(fromObjectSelected) < 1:
             del fromObjectSelected[:]
         self.fromObjectLabel.setText('FROM ')
 
     
     def fromObjectReload(self):
         self.fromObjectQList.clear()
-        del fromObjectSelected[:]
+        if len(fromObjectSelected) < 1:
+            del fromObjectSelected[:]
         self.fromObjectLabel.setText('FROM ')
         self.fromObjectLoad()
 
@@ -381,6 +399,15 @@ class matchMultiObject(QtWidgets.QMainWindow):
 
     ### "TO OBJECT" SECTION
     #
+    def toObjectGetSelected(self):
+        selection = cmds.ls(sl=1)
+        if len(selection) < 1:
+            self.statusBar.showMessage('Must be selected at least one item', 4000)
+            self.statusBar.setStyleSheet('background-color:'+red)
+        else:
+            self.toObjectQList.clear()
+            self.toObjectQList.addItems(selection)
+
     def toObjectFilter(self):
         textFilter = str(self.toObjectSearchBox.text()).lower()
         if not textFilter:
@@ -442,14 +469,15 @@ class matchMultiObject(QtWidgets.QMainWindow):
     def toObjectSelectNone(self):
         toObjectSelected = []
         self.toObjectQList.clearSelection()
-        if toObjectSelected != []:
+        if len(toObjectSelected) < 1:
             del toObjectSelected[:]
         self.toObjectLabel.setText('TO ')
 
 
     def toObjectReload(self):
         self.toObjectQList.clear()
-        del toObjectSelected[:]
+        if len(toObjectSelected) < 1:
+            del toObjectSelected[:]
         self.toObjectLoad()
         self.toObjectLabel.setText('TO ')
         
@@ -457,28 +485,33 @@ class matchMultiObject(QtWidgets.QMainWindow):
     
     
     ### MATCH
-    def match(self):            
+    def match(self):
+        if len(fromObjectSelected) < 1 or len(toObjectSelected) < 1:
+            self.statusBar.showMessage('Must be selected at least one item in both lists', 4000)
+            self.statusBar.setStyleSheet('background-color:'+red)
+        else:           
         
-        for f, t in zip(fromObjectSelected, toObjectSelected):
+            for f, t in zip(fromObjectSelected, toObjectSelected):
 
-            if self.matchPositionChk.isChecked() == True:
-                posStatus = True
-            else:
-                posStatus = False
+                if self.matchPositionChk.isChecked() == True:
+                    posStatus = True
+                else:
+                    posStatus = False
 
-            if self.matchRotationChk.isChecked() == True:
-                rotStatus = True
-            else:
-                rotStatus = False
+                if self.matchRotationChk.isChecked() == True:
+                    rotStatus = True
+                else:
+                    rotStatus = False
 
-            if self.matchScaleChk.isChecked() == True:
-                sclStatus = True
-            else:
-                sclStatus = False
-            
-            
-            cmds.matchTransform(f, t, pos=posStatus, rot=rotStatus, scl=sclStatus)
-            #self.statusBar.showMessage(str(posStatus)+str(rotStatus)+str(sclStatus), 4000)
+                if self.matchScaleChk.isChecked() == True:
+                    sclStatus = True
+                else:
+                    sclStatus = False
+                
+                cmds.matchTransform(f, t, pos=posStatus, rot=rotStatus, scl=sclStatus)
+                self.statusBar.showMessage('Transforms for '+ str(len(toObjectSelected))+' items matched successfuly!', 4000)
+                self.statusBar.setStyleSheet('background-color:'+green)
+                #self.statusBar.showMessage(str(posStatus)+str(rotStatus)+str(sclStatus), 4000)
 
 
     def matchBtnStatus(self):
