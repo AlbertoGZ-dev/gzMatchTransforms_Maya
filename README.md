@@ -1,5 +1,5 @@
 # matchMultiObject for Maya
-matchMultiObject makes match transformations on multiple objects by paired objects given a first selection list for the origin objects and second selection list to target objects. 
+matchMultiObject is a tool for Maya to do match transformations on multiple objects by paired objects given a first selection list for the origin objects and second selection list to target objects. 
 
 <img src="https://github.com/AlbertoGZ-dev/matchMultiObject/blob/master/matchMultiObject.jpg"></img>
 
