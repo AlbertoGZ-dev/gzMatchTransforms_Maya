@@ -10,7 +10,7 @@ if [ "$ver" -lt "27" ]; then
     echo "This script requires python 2.7 or greater"
     exit 1
 else
-    echo "Installing gzRenamerPro..."
+    echo "Installing gzMatchTransforms..."
     sleep 1.5
     cd $(dirname $0)
     python src/installers/install.py

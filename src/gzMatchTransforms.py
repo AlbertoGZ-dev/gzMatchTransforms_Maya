@@ -15,29 +15,47 @@
 
 '''
 
-from select import select
 from PySide2 import QtCore, QtWidgets, QtGui
 from shiboken2 import wrapInstance
-# from collections import OrderedDict
+from pathlib import Path
 
 import maya.cmds as cmds
-# import maya.mel as mel
 import maya.OpenMayaUI as omui
 import maya.api.OpenMaya as om
-# import re
-# import os
+import json
+import os
 
 
 # GENERAL VARS
-version = '0.1.1'
-about = 'by Alberto GZ'
-winWidth = 800
-winHeight = 800
+title = 'gzMatchTransforms'
+version = '0.1.2'
+about = 'by AlbertoGZ'
+winWidth = 500
+winHeight = 600
+scriptPath = os.path.dirname(__file__)
+configFile = ''
+gzMatchTransformsLogo = scriptPath+'/icons/gzMatchTransformsIcon.png'
+icon = QtGui.QIcon(gzMatchTransformsLogo)
+pixmap = QtGui.QPixmap(gzMatchTransformsLogo)
+
+# colors
 red = '#872323'
 green = '#207527'
 lightbrown = '#7d654b'
 lightpurple = '#604b69'
 lightgreen = '#5b694b'
+lightblue = '#3e5158'
+lightgrey = '#999'
+midgrey = '#777'
+darkgrey = '#111'
+darkgrey2 = '#222'
+magent = '#b31248'
+cyan = '#07888c'
+yellow = '#c7b600'
+orange = '#b8810a'
+white = '#c9c9c9'
+black = '#1a1a1a'
+
 
 fromObjectSelected = []
 toObjectSelected = []
@@ -48,73 +66,90 @@ def getMainWindow():
     mainWindow = wrapInstance(int(main_window_ptr), QtWidgets.QWidget)
     return mainWindow
 
-
 class gzMatchTransforms(QtWidgets.QMainWindow):
 
     def __init__(self, parent=getMainWindow()):
         super(gzMatchTransforms, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
 
     
-    #####################################################
-    #                  LAYOUT DESIGN                    #
-    #####################################################
 
+        #####################################################
+        #               MAIN LAYOUT DESIGN                  #
+        #####################################################
 
         # Creates object, Title Name and Adds a QtWidget as our central widget/Main Layout
         self.setObjectName('gzMatchTransformsUI')
-        self.setWindowTitle('gzMatchTransforms' + ' ' + 'v' + version + ' - ' + about)
-        mainLayout = QtWidgets.QWidget(self)
-        self.setCentralWidget(mainLayout)
+        self.setWindowTitle(title + ' ' + 'v' + version + ' - ' + about)
+        self.setWindowIcon(icon)
 
+        self.tabs = QtWidgets.QTabWidget(self)
+        self.tabs.setStyleSheet('background-color:' + darkgrey2)
+
+        tab1Layout = QtWidgets.QWidget(self)
+        tab2Layout = QtWidgets.QWidget(self)
+
+        self.tabs.addTab(tab1Layout, 'Match')
+        self.tabs.addTab(tab2Layout, 'About')
+
+        self.tabs.currentChanged.connect(self.onTabChange)
+       
+        self.tabs.setStyleSheet('QTabWidget::pane {border: 1px solid' + magent + ';}' 'QTabBar::tab:selected {background-color:'+ magent +';}')
+
+        self.setCentralWidget(self.tabs)
+
+
+
+        '''
+        |‾‾‾‾‾‾\________________________________________
+        |                                               |
+        |   MATCH TAB                                   |
+        |                                               |
+                                                      '''
+        ### LAYOUT
+        # Creating layouts
+        rows = QtWidgets.QVBoxLayout(tab1Layout)
         
-        # Adding a Horizontal layout to divide the UI in columns
-        columns = QtWidgets.QHBoxLayout(mainLayout)
+        # Creating N horizontal layout
+        row1 = QtWidgets.QHBoxLayout()
+        row2 = QtWidgets.QVBoxLayout()
 
         # Creating N vertical layout
-        self.col1 = QtWidgets.QVBoxLayout()
-        self.col2 = QtWidgets.QVBoxLayout()
-        self.col3 = QtWidgets.QVBoxLayout()
-        self.col4 = QtWidgets.QVBoxLayout()
-        self.col5 = QtWidgets.QVBoxLayout()
-        
-        # Set columns for each layout using stretch policy
-        columns.addLayout(self.col1, 3)
-        columns.addLayout(self.col2, 0)
-        columns.addLayout(self.col3, 3)
-        columns.addLayout(self.col4, 2)
-        columns.addLayout(self.col5, 3)
+        col1 = QtWidgets.QVBoxLayout()
+        col2 = QtWidgets.QVBoxLayout()
 
-        # Adding layouts
-        layout1 = QtWidgets.QVBoxLayout()
         layout1 = QtWidgets.QVBoxLayout()
         layout1A = QtWidgets.QVBoxLayout()
         layout1B = QtWidgets.QHBoxLayout()
-        layout2 = QtWidgets.QGridLayout(alignment=QtCore.Qt.AlignTop)
-        layout3 = QtWidgets.QVBoxLayout()
-        layout3A = QtWidgets.QVBoxLayout()
-        layout3B = QtWidgets.QHBoxLayout()
-        layout4 = QtWidgets.QGridLayout()
-        layout5 = QtWidgets.QGridLayout(alignment=QtCore.Qt.AlignTop)
         
-        self.col1.addLayout(layout1)
-        self.col2.addLayout(layout2)
-        self.col3.addLayout(layout3)   
-        self.col4.addLayout(layout4)      
-        self.col5.addLayout(layout5) 
-    
+        layout2 = QtWidgets.QVBoxLayout()
+        layout2A = QtWidgets.QVBoxLayout()
+        layout2B = QtWidgets.QHBoxLayout()
+       
+        layout3 = QtWidgets.QHBoxLayout(alignment=QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
+        layout4 = QtWidgets.QHBoxLayout()
+       
+        # Adding layouts
+        rows.addLayout(row1, 0)
+        rows.addLayout(row2, 1)
+        
+        row1.addLayout(col1, 1)
+        row1.addLayout(col2, 1)
+        
+        col1.addLayout(layout1)
+        col2.addLayout(layout2)
+        row2.addLayout(layout3)
+        row2.addLayout(layout4)
+      
         layout1.addLayout(layout1A)
         layout1.addLayout(layout1B)
-        layout2.addLayout(layout2, 1, 1)
-        layout3.addLayout(layout3A)
-        layout3.addLayout(layout3B)
-        layout4.addLayout(layout4, 1, 1)
-        layout5.addLayout(layout5, 1, 1)
-        
-       
+        layout2.addLayout(layout2A)
+        layout2.addLayout(layout2B)
 
-    #####################################################
-    #                     UI ELEMENTS                   #
-    #####################################################
+     
+       
+        #####################################################
+        #                     UI ELEMENTS                   #
+        #####################################################
 
         ### "FROM OBJECT" SECTION
         #
@@ -122,25 +157,25 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         # Caption (fromObject)
         self.fromObjectLabel = QtWidgets.QLabel("FROM ")
         self.fromObjectLabel.setFixedHeight(70)
-        self.fromObjectLabel.setStyleSheet("border: 3px solid"+lightgreen+';border-bottom:0; border-top-left-radius:12px; border-top-right-radius:12px')
         self.fromObjectLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
+        #self.fromObjectLabel.setStyleSheet('background-color:' + black)
 
         # Get selected button (fromObject)
         self.fromObjectGetSelectedBtn = QtWidgets.QPushButton('Get selected')
-        self.fromObjectGetSelectedBtn.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectGetSelectedBtn.setStyleSheet('background-color:' + black)
         self.fromObjectGetSelectedBtn.clicked.connect(self.fromObjectGetSelected)
 
         # Filter object type (fromObject)
         self.fromObjectFilterLabel = QtWidgets.QLabel('Show:')
         self.fromObjectFilterVisibleChk = QtWidgets.QCheckBox('Visible nodes only')
         self.fromObjectFilterVisibleChk.setChecked(True)
-        self.fromObjectFilterVisibleChk.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectFilterVisibleChk.setStyleSheet('background-color:' + black)
         self.fromObjectFilterVisibleChk.stateChanged.connect(self.fromObjectReload)
         self.fromObjectFilterRefNodesChk = QtWidgets.QCheckBox('Reference nodes only')
-        self.fromObjectFilterRefNodesChk.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectFilterRefNodesChk.setStyleSheet('background-color:' + black)
         self.fromObjectFilterRefNodesChk.stateChanged.connect(self.fromObjectReload)
         self.fromObjectFilterTopNodesChk = QtWidgets.QCheckBox('Top nodes only')
-        self.fromObjectFilterTopNodesChk.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectFilterTopNodesChk.setStyleSheet('background-color:' + black)
         self.fromObjectFilterTopNodesChk.stateChanged.connect(self.fromObjectReload)
         
         # SearchBox input for filter list (fromObject)
@@ -149,7 +184,7 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.fromObjectValidator = QtGui.QRegExpValidator(self.fromObjectRegex)
         self.fromObjectSearchBox.setValidator(self.fromObjectValidator)
         self.fromObjectSearchBox.textChanged.connect(self.fromObjectFilter)
-        self.fromObjectSearchBox.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectSearchBox.setStyleSheet('background-color:' + black)
         self.fromObjectSearchBox.setPlaceholderText("Search...")
 
         # List of objects (fromObject)
@@ -157,7 +192,7 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.fromObjectQList.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.fromObjectQList.setMinimumWidth(150)
         self.fromObjectQList.itemSelectionChanged.connect(self.fromObjectSel)
-        self.fromObjectQList.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectQList.setStyleSheet('background-color:' + black)
 
         self.fromObjectSelectLabel = QtWidgets.QLabel('Select')
         
@@ -165,18 +200,18 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.fromObjectSelectAllBtn = QtWidgets.QPushButton('All')
         self.fromObjectSelectAllBtn.setFixedWidth(70)
         self.fromObjectSelectAllBtn.clicked.connect(self.fromObjectSelectAll)
-        self.fromObjectSelectAllBtn.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectSelectAllBtn.setStyleSheet('background-color:' + black)
 
         # None button select (fromObject)
         self.fromObjectSelectNoneBtn = QtWidgets.QPushButton('None')
         self.fromObjectSelectNoneBtn.setFixedWidth(70)
         self.fromObjectSelectNoneBtn.clicked.connect(self.fromObjectSelectNone)
-        self.fromObjectSelectNoneBtn.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectSelectNoneBtn.setStyleSheet('background-color:' + black)
 
         # Reload button (fromObject)
         self.fromObjectReloadBtn = QtWidgets.QPushButton('Reload')
         self.fromObjectReloadBtn.clicked.connect(self.fromObjectReload)
-        self.fromObjectReloadBtn.setStyleSheet('background-color:' + lightgreen)
+        self.fromObjectReloadBtn.setStyleSheet('background-color:' + black)
 
 
 
@@ -185,25 +220,25 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         # Caption (toObject)
         self.toObjectLabel = QtWidgets.QLabel("TO ")
         self.toObjectLabel.setFixedHeight(70)
-        self.toObjectLabel.setStyleSheet("border: 3px solid"+lightpurple+';border-bottom:0; border-top-left-radius:12px; border-top-right-radius:12px')
         self.toObjectLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
+        #self.toObjectLabel.setStyleSheet('background-color:' + white + '; color:' + black)
 
         # Get selected button (toObject)
         self.toObjectGetSelectedBtn = QtWidgets.QPushButton('Get selected')
-        self.toObjectGetSelectedBtn.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectGetSelectedBtn.setStyleSheet('background-color:' + white + '; color:' + black)
         self.toObjectGetSelectedBtn.clicked.connect(self.toObjectGetSelected)
        
         # Filter object type (toObject)
         self.toObjectFilterLabel = QtWidgets.QLabel('Show:')
         self.toObjectFilterVisibleChk = QtWidgets.QCheckBox('Visible nodes only')
         self.toObjectFilterVisibleChk.setChecked(True)
-        self.toObjectFilterVisibleChk.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectFilterVisibleChk.setStyleSheet('background-color:' + white + '; color:' + black)
         self.toObjectFilterVisibleChk.stateChanged.connect(self.toObjectReload)
         self.toObjectFilterRefNodesChk = QtWidgets.QCheckBox('Reference nodes only')
-        self.toObjectFilterRefNodesChk.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectFilterRefNodesChk.setStyleSheet('background-color:' + white + '; color:' + black)
         self.toObjectFilterRefNodesChk.stateChanged.connect(self.toObjectReload)
         self.toObjectFilterTopNodesChk = QtWidgets.QCheckBox('Top nodes only')
-        self.toObjectFilterTopNodesChk.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectFilterTopNodesChk.setStyleSheet('background-color:' + white + '; color:' + black)
         self.toObjectFilterTopNodesChk.stateChanged.connect(self.toObjectReload)
        
         # SearchBox input for filter list (toObject)
@@ -212,7 +247,7 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.toObjectValidator = QtGui.QRegExpValidator(self.toObjectRegex)
         self.toObjectSearchBox.setValidator(self.toObjectValidator)
         self.toObjectSearchBox.textChanged.connect(self.toObjectFilter)
-        self.toObjectSearchBox.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectSearchBox.setStyleSheet('background-color:' + white + '; color:' + black)
         self.toObjectSearchBox.setPlaceholderText("Search...")
 
         # List of objects (toObject)
@@ -220,7 +255,7 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.toObjectQList.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.toObjectQList.setMinimumWidth(150)
         self.toObjectQList.itemSelectionChanged.connect(self.toObjectSel)
-        self.toObjectQList.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectQList.setStyleSheet('background-color:' + white + '; color:' + black)
 
         self.selecttoObjectLabel = QtWidgets.QLabel('Select')
         
@@ -228,34 +263,38 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.toObjectSelectAllBtn = QtWidgets.QPushButton('All')
         self.toObjectSelectAllBtn.setFixedWidth(70)
         self.toObjectSelectAllBtn.clicked.connect(self.toObjectSelectAll)
-        self.toObjectSelectAllBtn.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectSelectAllBtn.setStyleSheet('background-color:' + white + '; color:' + black)
 
         # None button select (toObject)
         self.toObjectSelectNoneBtn = QtWidgets.QPushButton('None')
         self.toObjectSelectNoneBtn.setFixedWidth(70)
         self.toObjectSelectNoneBtn.clicked.connect(self.toObjectSelectNone)
-        self.toObjectSelectNoneBtn.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectSelectNoneBtn.setStyleSheet('background-color:' + white + '; color:' + black)
 
         # Reload button (toObject)
         self.toObjectSelectReloadBtn = QtWidgets.QPushButton('Reload')
         self.toObjectSelectReloadBtn.clicked.connect(self.toObjectReload)
-        self.toObjectSelectReloadBtn.setStyleSheet('background-color:' + lightpurple)
+        self.toObjectSelectReloadBtn.setStyleSheet('background-color:' + white + '; color:' + black)
     
         # Status bar
         self.statusBar = QtWidgets.QStatusBar()
         self.setStatusBar(self.statusBar)
         self.statusBar.messageChanged.connect(self.statusChanged)
 
-        # Spacer
-        separator = QtWidgets.QWidget()
-        separator.setFixedHeight(2)
-        separator.setStyleSheet("background-color:rgb(255,0,0)")
+        # Spacers
+        self.spacer1 = QtWidgets.QWidget()
+        self.spacer1.setFixedHeight(25)
+        self.spacer2 = QtWidgets.QWidget()
+        self.spacer2.setFixedHeight(25)
+        self.spacer3 = QtWidgets.QWidget()
+        self.spacer3.setFixedHeight(25)
 
         # Match button
         self.matchBtn = QtWidgets.QPushButton('Match')
-        self.matchBtn.setFixedHeight(80)
+        self.matchBtn.setMinimumWidth(winWidth)
+        self.matchBtn.setFixedHeight(60)
         self.matchBtn.clicked.connect(self.match)
-        #self.matchBtn.setStyleSheet('background-color:' + lightblue)
+        self.matchBtn.setStyleSheet('background-color:' + magent)
 
         # Match transforms checkboxes
         self.matchPositionChk = QtWidgets.QCheckBox('Position')
@@ -283,28 +322,63 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         layout1B.addWidget(self.fromObjectSelectNoneBtn)
         layout1A.addWidget(self.fromObjectReloadBtn)
 
-        layout3A.addWidget(self.toObjectLabel)
-        layout3A.addWidget(self.toObjectGetSelectedBtn)
-        layout3A.addWidget(self.toObjectSearchBox)
-        layout3A.addWidget(self.toObjectQList)
-        layout3A.addWidget(self.toObjectFilterVisibleChk)
-        layout3A.addWidget(self.toObjectFilterTopNodesChk)
-        layout3A.addWidget(self.toObjectFilterRefNodesChk)
-        layout3B.addWidget(self.selecttoObjectLabel)
-        layout3B.addWidget(self.toObjectSelectAllBtn)
-        layout3B.addWidget(self.toObjectSelectNoneBtn)
-        layout3A.addWidget(self.toObjectSelectReloadBtn)
+        layout2A.addWidget(self.toObjectLabel)
+        layout2A.addWidget(self.toObjectGetSelectedBtn)
+        layout2A.addWidget(self.toObjectSearchBox)
+        layout2A.addWidget(self.toObjectQList)
+        layout2A.addWidget(self.toObjectFilterVisibleChk)
+        layout2A.addWidget(self.toObjectFilterTopNodesChk)
+        layout2A.addWidget(self.toObjectFilterRefNodesChk)
+        layout2B.addWidget(self.selecttoObjectLabel)
+        layout2B.addWidget(self.toObjectSelectAllBtn)
+        layout2B.addWidget(self.toObjectSelectNoneBtn)
+        layout2A.addWidget(self.toObjectSelectReloadBtn)
+        
+        col1.addWidget(self.spacer1)
+        col2.addWidget(self.spacer2)
 
-        layout4.addWidget(self.matchPositionChk)
-        layout4.addWidget(self.matchRotationChk)
-        layout4.addWidget(self.matchScaleChk)
+        layout3.addWidget(self.matchPositionChk)
+        layout3.addWidget(self.matchRotationChk)
+        layout3.addWidget(self.matchScaleChk)
         layout4.addWidget(self.matchBtn)
 
+
+
+        '''
+        |‾‾‾‾‾‾‾‾\______________________________________
+        |                                               |
+        |   ABOUT TAB                                   |
+        |                                               |
+                                                      '''
+        ### LAYOUT
+        # Creating layouts
+        aboutLayout = QtWidgets.QHBoxLayout(tab2Layout)  
+        layout1 = QtWidgets.QVBoxLayout(alignment=QtCore.Qt.AlignCenter)   
+        # Adding layouts
+        aboutLayout.addLayout(layout1)
+
+
+        ### UI ELEMENTS
+        self.aboutIcon = QtWidgets.QLabel()
+        self.aboutIcon.setPixmap(pixmap)
+        self.aboutIcon.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)    
+        self.aboutLabel = QtWidgets.QLabel('gzMatchTransforms\nv'+version+'\n'+about+'\n\ngzMatchTransforms is a tool for Maya \nto do match transformations \non multiple objects by paired objects \ngiven a first selection list for the origin objects \nand second selection list to target objects..\n\n')
+        self.aboutLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
+
+
+         ### ADDING ELEMENTS TO LAYOUT
+        layout1.addWidget(self.aboutIcon)
+        layout1.addWidget(self.aboutLabel)
+
        
-        self.resize(winWidth, winHeight)    
+
+        ### GLOBAL UI WINDOW
+        #
+        self.resize(winWidth, winHeight)
 
 
-        
+    
+
         
     #####################################################
     #                 INIT FUNCTIONS                    #
@@ -322,6 +396,16 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
     #####################################################
     #                      FUNCTIONS                    #
     #####################################################
+
+    ### UI Settings by Tab
+    #
+    def onTabChange(self, i): 
+        #self.statusBar.showMessage(str(i), 2000)
+        if i == 0:
+            self.tabs.setStyleSheet('QTabWidget::pane {border: 1px solid' + magent + '; background-color:' + darkgrey2 +'}' 'QTabBar::tab:selected {background-color:' + magent +';}')
+        if i == 1:
+            self.tabs.setStyleSheet('QTabWidget::pane {border: 1px solid' + magent + '; background-color:' + darkgrey2 +'}' 'QTabBar::tab:selected {background-color:' + magent +';}')
+
 
     ### "FROM OBJECT" SECTION
     #

@@ -13,5 +13,5 @@ else
     echo "Uninstalling gzMatchTransforms..."
     sleep 1.5
     cd $(dirname $0)
-    python installers/install.py
+    python installers/uninstall.py
 fi

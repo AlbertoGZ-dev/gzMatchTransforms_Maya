@@ -132,9 +132,8 @@ def install():
                         #file.close()
                     
                     # Remove existent button
-                    filedata = re.sub('//begins_gzMatchTransforms?(.*?)//ends_gzMatchTransforms', '', filedata, flags=re.DOTALL)
+                    #filedata = re.sub('//begins_gzMatchTransforms?(.*?)//ends_gzMatchTransforms', '', filedata, flags=re.DOTALL)
 
-                   
 
                     # Replace the target string
                     filedata = filedata.replace('}', '', 1)
@@ -171,12 +170,11 @@ def install():
 
 
             # Installation completed
-            sleep(1)
-            print('██████████████████████████████████████████████████████████')
-            print('██                                                      ██')
-            print('██  ' + scriptName +' installed successfully for Maya ' + currentVersion + '!  ██')
-            print('██                                                      ██')
-            print('██████████████████████████████████████████████████████████')
+            print('█████████████████████████████████████████████████████████████████████████████████')
+            print('██                                                                             ██')
+            print('██           '+scriptName+' installed successfully for Maya '+currentVersion+'!           ██')
+            print('██                                                                             ██')
+            print('█████████████████████████████████████████████████████████████████████████████████')
             sleep(1)
 
    

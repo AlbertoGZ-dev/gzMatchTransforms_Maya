@@ -116,12 +116,11 @@ def uninstall():
                 shutil.rmtree(target, ignore_errors=True)
                 
                 # Uninstall completed
-               
-                print('████████████████████████████████████████████████████████████')
-                print('██                                                        ██')
-                print('██  ' + scriptName +' uninstalled successfully for Maya ' + currentVersion + '!  ██')
-                print('██                                                        ██')
-                print('████████████████████████████████████████████████████████████')
+                print('█████████████████████████████████████████████████████████████████████████████████')
+                print('██                                                                             ██')
+                print('██           '+scriptName+' uninstalled successfully for Maya '+currentVersion+'!         ██')
+                print('██                                                                             ██')
+                print('█████████████████████████████████████████████████████████████████████████████████')
                 sleep(1)
             else:
                 print('[ FAILED ]\n' )

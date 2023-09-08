@@ -3,7 +3,7 @@ global proc shelf_gzTools () {
     global string $gBuffStr0;
     global string $gBuffStr1;
 
-    //begins_gzRenamerPro
+    //begins_gzMatchTransforms
     shelfButton
         -enableCommandRepeat 1
         -flexibleWidthType 3
@@ -14,12 +14,12 @@ global proc shelf_gzTools () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "gzRenamerPro" 
+        -annotation "gzMatchTransforms" 
         -enableBackground 0
         -backgroundColor 0 0 0 
-        -highlightColor 0.321569 0.521569 0.65098 
+        -highlightColor 0.3 0.5 0.6 
         -align "center" 
-        -label "gzRenamerPro" 
+        -label "gzMatchTransforms" 
         -labelOffset 0
         -rotation 0
         -flipX 0
@@ -28,14 +28,14 @@ global proc shelf_gzTools () {
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0 
-        -image "gzRenamerProIcon.png" 
+        -image "gzMatchTransformsIcon.png" 
         -style "iconOnly" 
         -marginWidth 1
         -marginHeight 1
-        -command "from gzRenamerPro import gzRenamerPro\nimport importlib\nimportlib.reload(gzRenamerPro)\n\ntry:\n   md_win.close()\n\nexcept:\n   pass\n\nmd_win = gzRenamerPro.gzRenamerPro(parent=gzRenamerPro.getMainWindow())\nmd_win.show()\nmd_win.raise_()" 
+        -command "from gzMatchTransforms import gzMatchTransforms\nimport importlib\nimportlib.reload(gzMatchTransforms)\n\ntry:\n   md_win.close()\n\nexcept:\n   pass\n\nmd_win = gzMatchTransforms.gzMatchTransforms(parent=gzMatchTransforms.getMainWindow())\nmd_win.show()\nmd_win.raise_()" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
     ;
-    //ends_gzRenamerPro
+    //ends_gzMatchTransforms
 } 

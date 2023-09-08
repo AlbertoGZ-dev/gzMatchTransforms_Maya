@@ -12,5 +12,4 @@ if [ "$ver" -lt "27" ]; then
 else
     echo "Uninstalling gzMatchTransforms..."
     sleep 1.5
-    python installers/install.py
-fi
+    python installers/uninstall.py

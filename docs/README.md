@@ -1,7 +1,7 @@
 # gzMatchTransforms for Maya
 gzMatchTransforms is a tool for Maya to do match transformations on multiple objects by paired objects given a first selection list for the origin objects and second selection list to target objects. 
 
-<img src="https://github.com/AlbertoGZ-dev/gzMatchTransforms/blob/master/gzMatchTransforms.jpg"></img>
+<img src="https://github.com/AlbertoGZ-dev/gzMatchTransforms/blob/master/docs/gzMatchTransforms.png"></img>
 
 ## Setup
 
