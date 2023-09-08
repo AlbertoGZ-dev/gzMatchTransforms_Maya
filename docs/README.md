@@ -4,7 +4,7 @@ gzMatchTransforms is a tool for Maya to do match transformations on multiple obj
 <img src="https://github.com/AlbertoGZ-dev/gzMatchTransforms_Maya/blob/master/docs/gzMatchTransforms.png"></img>
 
 ## Setup
-Download package from [here](https://github.com/AlbertoGZ-dev/gzMatchTransforms_Maya/releases/)
+Download the release version package from <a src="https://github.com/AlbertoGZ-dev/gzMatchTransforms_Maya/releases/">here</a>
 
 ### Automatic installation
 1. Close all instances of any opened version of Maya.
