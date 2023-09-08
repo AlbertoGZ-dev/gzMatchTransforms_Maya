@@ -5,7 +5,8 @@ gzMatchTransforms is a tool for Maya to do match transformations on multiple obj
 
 ## Setup
 
-#### Automatic installation
+
+### Automatic installation
 
 Run the installer for your plattform.
 
@@ -16,7 +17,7 @@ Run the installer for your plattform.
 Note: on MacOS and Linux you may need to set execution permissions the installer file. Ex. *chmod +x install_linux.sh*
 
 
-#### Manual installation
+### Manual installation
 
 Place the *gzMatchTransforms.py* and *\_\_init\_\_.py* files in a folder named *gzMatchTransforms* in your Maya scripts directory and create a python shell button with the following code:
 
