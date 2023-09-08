@@ -10,9 +10,9 @@ gzMatchTransforms is a tool for Maya to do match transformations on multiple obj
 1. Close all instances any opened version of Maya.
 2. Run the installer for your plattform.
 
-- Windows by double clicking *install_win.bat* file.
-- MacOS by double clicking *install_mac* file.
-- Linux open shell and execute *install_linux.sh* file.
+    - Windows by double clicking *install_win.bat* file.
+    - MacOS by double clicking *install_mac* file.
+    - Linux open shell and execute *install_linux.sh* file.
 
 Note: on MacOS and Linux you may need to set execution permissions the installer file. Ex. *chmod +x install_linux.sh*
 
