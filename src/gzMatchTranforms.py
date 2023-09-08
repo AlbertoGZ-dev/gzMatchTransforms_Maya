@@ -1,9 +1,9 @@
 '''
 ████████████████████████████████████████████████████████████████████████████
     
-    Macth MultiObject for Maya
+    gzMatchTransforms for Maya
     
-    Description: Match MultiObject makes match transformations on 
+    Description: gzMatchTransforms makes match transformations on 
     multiple objects by paired objects given a first selection list 
     for the origin objects and second selection list to target objects. 
     
@@ -49,10 +49,10 @@ def getMainWindow():
     return mainWindow
 
 
-class matchMultiObject(QtWidgets.QMainWindow):
+class gzMatchTransforms(QtWidgets.QMainWindow):
 
     def __init__(self, parent=getMainWindow()):
-        super(matchMultiObject, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
+        super(gzMatchTransforms, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
 
     
     #####################################################
@@ -61,8 +61,8 @@ class matchMultiObject(QtWidgets.QMainWindow):
 
 
         # Creates object, Title Name and Adds a QtWidget as our central widget/Main Layout
-        self.setObjectName('matchMultiObjectUI')
-        self.setWindowTitle('matchMultiObject' + ' ' + 'v' + version + ' - ' + about)
+        self.setObjectName('gzMatchTransformsUI')
+        self.setWindowTitle('gzMatchTransforms' + ' ' + 'v' + version + ' - ' + about)
         mainLayout = QtWidgets.QWidget(self)
         self.setCentralWidget(mainLayout)
 
@@ -580,7 +580,7 @@ class matchMultiObject(QtWidgets.QMainWindow):
 #####################################################
 
 if __name__ == '__main__':
-    win = matchMultiObject(parent=getMainWindow())
+    win = gzMatchTransforms(parent=getMainWindow())
     try:
         win.close()
     except:
