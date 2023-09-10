@@ -175,6 +175,7 @@ def install():
             print('██           '+scriptName+' installed successfully for Maya '+currentVersion+'!           ██')
             print('██                                                                             ██')
             print('█████████████████████████████████████████████████████████████████████████████████')
+            print('\n')
             sleep(1)
 
    

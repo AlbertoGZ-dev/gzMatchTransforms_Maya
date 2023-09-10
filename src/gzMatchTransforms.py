@@ -34,9 +34,9 @@ winWidth = 500
 winHeight = 600
 scriptPath = os.path.dirname(__file__)
 configFile = ''
-gzMatchTransformsLogo = scriptPath+'/icons/gzMatchTransformsIcon.png'
-icon = QtGui.QIcon(gzMatchTransformsLogo)
-pixmap = QtGui.QPixmap(gzMatchTransformsLogo)
+logo = scriptPath+'/icons/gzMatchTransformsIcon.png'
+icon = QtGui.QIcon(logo)
+pixmap = QtGui.QPixmap(logo)
 
 # colors
 red = '#872323'
@@ -290,7 +290,7 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.spacer3.setFixedHeight(25)
 
         # Match button
-        self.matchBtn = QtWidgets.QPushButton('Match')
+        self.matchBtn = QtWidgets.QPushButton('Match Transforms')
         self.matchBtn.setMinimumWidth(winWidth)
         self.matchBtn.setFixedHeight(60)
         self.matchBtn.clicked.connect(self.match)
@@ -362,7 +362,7 @@ class gzMatchTransforms(QtWidgets.QMainWindow):
         self.aboutIcon = QtWidgets.QLabel()
         self.aboutIcon.setPixmap(pixmap)
         self.aboutIcon.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)    
-        self.aboutLabel = QtWidgets.QLabel('gzMatchTransforms\nv'+version+'\n'+about+'\n\ngzMatchTransforms is a tool for Maya \nto do match transformations \non multiple objects by paired objects \ngiven a first selection list for the origin objects \nand second selection list to target objects..\n\n')
+        self.aboutLabel = QtWidgets.QLabel('gzMatchTransforms\nv'+version+'\n'+about+'\n\ngzMatchTransforms for Maya is a tool \nto do match transformations \non multiple objects by paired objects \ngiven a first selection list for the origin objects \nand second selection list to target objects..\n\n')
         self.aboutLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
 
