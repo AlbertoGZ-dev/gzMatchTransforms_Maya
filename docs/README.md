@@ -1,5 +1,5 @@
 # gzMatchTransforms for Maya
-*gzMatchTransforms* for Maya is a tool to do match transformations on multiple objects at same time by paired objects given a first selection list for the origin objects and second selection list to target objects. 
+**gzMatchTransforms** for Maya is a tool to do match transformations on multiple objects at same time by paired objects given a first selection list for the origin objects and second selection list to target objects. 
 
 <img src="https://github.com/AlbertoGZ-dev/gzMatchTransforms_Maya/blob/master/docs/gzMatchTransformsUI_1.png"></img>
 
